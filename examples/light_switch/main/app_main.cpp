@@ -9,6 +9,7 @@
 #include <esp_err.h>
 #include <esp_log.h>
 #include <nvs_flash.h>
+#include <esp_random.h>
 
 #include <esp_matter.h>
 #include <esp_matter_console.h>
@@ -24,6 +25,9 @@
 #if CONFIG_DYNAMIC_PASSCODE_COMMISSIONABLE_DATA_PROVIDER
 #include <custom_provider/dynamic_commissionable_data_provider.h>
 #endif
+
+#include "memfault/esp_port/core.h"
+#include "memfault/components.h"
 
 static const char *TAG = "app_main";
 uint16_t switch_endpoint_id = 0;
@@ -98,6 +102,10 @@ extern "C" void app_main()
 {
     esp_err_t err = ESP_OK;
 
+    // Memfault init
+    memfault_boot();
+    memfault_device_info_dump();
+
     /* Initialize the ESP NVS layer */
     nvs_flash_init();
 
@@ -120,6 +128,23 @@ extern "C" void app_main()
 
     switch_endpoint_id = endpoint::get_id(endpoint);
     ESP_LOGI(TAG, "Switch created with endpoint_id %d", switch_endpoint_id);
+
+    // Set up initial on-boot metrics:
+    MEMFAULT_METRIC_SET_STRING(commissioning_status, "Commissioned");
+    MEMFAULT_METRIC_SET_UNSIGNED(commissioning_attempts, 0);
+    MEMFAULT_METRIC_SET_UNSIGNED(commissioning_successes, 0);
+    MEMFAULT_METRIC_SET_UNSIGNED(commissioning_failures, 0);
+    MEMFAULT_METRIC_SET_STRING(matter_current_mode, "Online");
+    MEMFAULT_METRIC_SET_STRING(matter_controller_or_end_device, "EndDevice");
+    MEMFAULT_METRIC_SET_STRING(matter_phys_iface, "WiFi");
+    MEMFAULT_METRIC_SET_UNSIGNED(num_subscriptions, 0);
+    MEMFAULT_METRIC_SET_UNSIGNED(sum_subscriptions, 0);
+    MEMFAULT_METRIC_SET_UNSIGNED(matter_group_id, 7);
+    MEMFAULT_METRIC_SET_UNSIGNED(matter_keyset_id, 9);
+    MEMFAULT_METRIC_SET_STRING(matter_spec_ver, "1.3");
+    MEMFAULT_METRIC_SET_STRING(matter_node_name, "LSW1");
+    MEMFAULT_METRIC_SET_UNSIGNED(matter_ble_commissioning, 1);
+    MEMFAULT_METRIC_SET_UNSIGNED(matter_cluster_count, 3);
 
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD
     /* Set OpenThread platform config */
@@ -145,4 +170,16 @@ extern "C" void app_main()
     esp_matter::console::wifi_register_commands();
     esp_matter::console::init();
 #endif
+
+    int counter = 0;
+    while(true) {
+        if (counter++ % 300 == 0) {  // do a thing
+            ESP_LOGI(TAG, "Updating matter metrics...");
+            MEMFAULT_METRIC_SET_UNSIGNED(matter_cluster_count, esp_random() % 3);
+            MEMFAULT_METRIC_SET_UNSIGNED(num_subscriptions, esp_random() % 5);
+            MEMFAULT_METRIC_SET_UNSIGNED(sum_subscriptions, esp_random() % 5);
+            MEMFAULT_METRIC_SET_UNSIGNED(commissioning_attempts, esp_random() % 50);
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
 }

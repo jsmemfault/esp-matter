@@ -1,0 +1,34 @@
+#include "sdkconfig.h"
+
+// File for holding custom metrics:
+//   https://mflt.io/embedded-metrics
+
+MEMFAULT_METRICS_STRING_KEY_DEFINE(commissioning_status, 16)
+MEMFAULT_METRICS_KEY_DEFINE(commissioning_attempts, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(commissioning_failures, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(commissioning_successes, kMemfaultMetricType_Unsigned)
+
+MEMFAULT_METRICS_STRING_KEY_DEFINE(matter_phys_iface, 16)
+
+MEMFAULT_METRICS_KEY_DEFINE(diag_current_free_memory_int, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(diag_current_free_memory_ext, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(diag_largest_free_block_int, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(diag_largest_free_block_ext, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(diag_min_ever_free_size_int, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(diag_min_ever_free_size_ext, kMemfaultMetricType_Unsigned)
+
+MEMFAULT_METRICS_STRING_KEY_DEFINE(matter_current_mode, 16)
+MEMFAULT_METRICS_STRING_KEY_DEFINE(matter_controller_or_end_device, 16)
+
+MEMFAULT_METRICS_KEY_DEFINE(num_subscriptions, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(sum_subscriptions, kMemfaultMetricType_Unsigned)
+
+MEMFAULT_METRICS_KEY_DEFINE(matter_group_id, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(matter_keyset_id, kMemfaultMetricType_Unsigned)
+
+MEMFAULT_METRICS_KEY_DEFINE(matter_cluster_count, kMemfaultMetricType_Unsigned)
+
+MEMFAULT_METRICS_KEY_DEFINE(matter_gap_advertising, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(matter_ble_commissioning, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_STRING_KEY_DEFINE(matter_node_name, 64)
+MEMFAULT_METRICS_STRING_KEY_DEFINE(matter_spec_ver, 8)
